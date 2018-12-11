@@ -1,34 +1,39 @@
 pragma solidity ^0.4.24;
 
-contract SmartTrust {
-  event TrustFunded(uint funding, uint totalValue);
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+
+contract SmartTrust is Ownable {
+  event TrustFunded(uint funding, uint trustValue);
+  event PaymentMade(uint payment, uint trustValue);
   
   address grantor;
   address beneficiary;
   address trustee;
+  uint paymentPercentInBP;
   
-  modifier onlyGrantor () {
+  modifier onlyGrantor {
     require(msg.sender == grantor, "uh oh, you don't have the right permissions");
     _;
   } 
 
-  modifier grantorOrTrustee () {
+  modifier grantorOrTrustee {
     require(msg.sender == grantor || msg.sender == trustee, "uh oh, you don't have the right permissions");
     _;
   }
 
-  modifier onlyBeneficiary () {
+  modifier onlyBeneficiary {
     require(msg.sender == beneficiary, "uh oh, you don't have the right permissions");
     _;
   }
 
-  function initializeParties (address _grantor, address _trustee, address _beneficiary) public payable {
+  function initializeParties (address _grantor, address _trustee, address _beneficiary, uint _percent) public payable {
     grantor = _grantor;
     beneficiary = _beneficiary;
     trustee = _trustee;
+    paymentPercentInBP = _percent;
   }
 
-  function () payable public {
+  function () public payable {
     if (msg.sender != grantor && msg.value > 0){
       msg.sender.transfer(msg.value);
     } else {
@@ -36,7 +41,16 @@ contract SmartTrust {
     }
   }
 
-  function fundTrust () public payable onlyGrantor() {
+  function fundTrust () public payable onlyGrantor {
     emit TrustFunded(msg.value, address(this).balance);
   }
+
+  function makePayment () public onlyOwner {
+    uint memory payment; 
+    uint memory trustBalance = address(this).balance;
+    payment = trustBalance * paymentPercentInBP / 100;
+    require(payment > 0 && payment < trustBalance, "check to make sure there are sufficient funds");
+    beneficiary.transfer(payment);
+    emit PaymentMade(payment, address(this).balance);
+  } 
 }
