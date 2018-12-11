@@ -59,8 +59,7 @@ contract SmartTrust {
     paymentPercentInBP = _basisPoints;
   }
 
-   /// @notice fallback function which refunds ether if the caller is not the grantor. Will accept the ether if caller is the grantor
-  
+  /// @notice fallback function which refunds ether if the caller is not the grantor. Will accept the ether if caller is the grantor
   function () external payable {
     if (msg.sender != grantor && msg.value > 0){
       msg.sender.transfer(msg.value);
@@ -88,7 +87,7 @@ contract SmartTrust {
     emit PaymentMade(payment, address(this).balance);
   } 
   
-    /**
+  /**
    * @notice changePercentage is called by the grantor or trustee in a DApp to change the percentage paid to the beneficiary
    * @param _newPaymentPercentInBP - new payment percentage in basis points
    */

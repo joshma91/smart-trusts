@@ -1,0 +1,113 @@
+[
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_newPaymentPercentInBP",
+				"type": "uint256"
+			}
+		],
+		"name": "changePercentage",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "fundTrust",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_grantor",
+				"type": "address"
+			},
+			{
+				"name": "_trustee",
+				"type": "address"
+			},
+			{
+				"name": "_beneficiary",
+				"type": "address"
+			},
+			{
+				"name": "_basisPoints",
+				"type": "uint256"
+			}
+		],
+		"name": "initializeParties",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_percent",
+				"type": "uint256"
+			}
+		],
+		"name": "makePayment",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "terminateTrust",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "fallback"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "funding",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "trustValue",
+				"type": "uint256"
+			}
+		],
+		"name": "TrustFunded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "payment",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "trustValue",
+				"type": "uint256"
+			}
+		],
+		"name": "PaymentMade",
+		"type": "event"
+	}
+]
