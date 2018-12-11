@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.1;
 
 /**
  * @title SmartTrust
@@ -14,7 +14,7 @@ contract SmartTrust {
   event PaymentMade(uint payment, uint trustValue);
   
   address grantor;
-  address beneficiary;
+  address payable beneficiary;
   address trustee;
   address openlaw;
 
@@ -48,7 +48,7 @@ contract SmartTrust {
    * @param _beneficiary - beneficiary address
    * @param _basisPoints - percentage of trust paid per period in basis points
    */
-  function initializeParties (address _grantor, address _trustee, address _beneficiary, uint _basisPoints) public payable {
+  function initializeParties (address _grantor, address _trustee, address payable _beneficiary, uint _basisPoints) public payable {
     
     // require that the openlaw variable is unset to implement access control 
     require(openlaw == address(0), "contract is already in use");
@@ -61,7 +61,7 @@ contract SmartTrust {
 
    /// @notice fallback function which refunds ether if the caller is not the grantor. Will accept the ether if caller is the grantor
   
-  function () public payable {
+  function () external payable {
     if (msg.sender != grantor && msg.value > 0){
       msg.sender.transfer(msg.value);
     } else {
