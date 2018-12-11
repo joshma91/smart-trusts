@@ -45,11 +45,11 @@ contract SmartTrust is Ownable {
     emit TrustFunded(msg.value, address(this).balance);
   }
 
-  function makePayment () public onlyOwner {
+  function makePayment (uint _percent) public onlyOwner {
     uint memory payment; 
     uint memory trustBalance = address(this).balance;
     payment = trustBalance * paymentPercentInBP / 100;
-    require(payment > 0 && payment < trustBalance, "check to make sure there are sufficient funds");
+    require(payment > 0 && payment < trustBalance, "make sure there are sufficient funds in the trust");
     beneficiary.transfer(payment);
     emit PaymentMade(payment, address(this).balance);
   } 
