@@ -1,4 +1,4 @@
-pragma solidity ^0.5.1;
+pragma solidity ^0.4.24;
 
 /**
  * @title SmartTrust
@@ -9,12 +9,11 @@ contract SmartTrust {
   /// @notice TrustFunded is emitted when the Grantor adds funds to the trust 
   event TrustFunded(uint funding, uint trustValue);
   
-
   /// @notice PaymentMade is emitted every time a payment is made to the beneficiary
   event PaymentMade(uint payment, uint trustValue);
   
   address grantor;
-  address payable beneficiary;
+  address beneficiary;
   address trustee;
   address openlaw;
 
@@ -48,7 +47,7 @@ contract SmartTrust {
    * @param _beneficiary - beneficiary address
    * @param _basisPoints - percentage of trust paid per period in basis points
    */
-  function initializeParties (address _grantor, address _trustee, address payable _beneficiary, uint _basisPoints) public payable {
+  function initializeParties (address _grantor, address _trustee, address _beneficiary, uint _basisPoints) public payable {
     
     // require that the openlaw variable is unset to implement access control 
     require(openlaw == address(0), "contract is already in use");
@@ -74,10 +73,9 @@ contract SmartTrust {
   }
 
   /**
-   * @notice makePayment is called at an interval specified in the OpenLaw contract to distribute payments to beneficiary 
-   * @param _percent - this just serves as a dummy variable because I haven't haven't figured out how to call Solidity functions with 0 arguments in OpenLaw
+   * @notice makePayment is called at an interval specified in the OpenLaw contract to distribute payments to beneficiary
    */
-  function makePayment (uint _percent) public onlyOpenLaw {
+  function makePayment () public onlyOpenLaw {
     uint payment; 
     uint trustBalance = address(this).balance;
     payment = trustBalance * paymentPercentInBP / 10000;
@@ -96,6 +94,10 @@ contract SmartTrust {
     paymentPercentInBP = _newPaymentPercentInBP;
   }
 
+  function withdrawFromTrust (uint _amount) public onlyGrantor {
+    require(_amount <= address(this).balance, "can't withdraw more than the trust balance");
+    grantor.transfer(_amount);
+  }
 
   /// @notice terminateTrust is called by the grantor or trustee in a DApp to kill this contract and send remaining funds to beneficiary
   function terminateTrust () public grantorOrTrustee {
