@@ -17,20 +17,16 @@ export default class HistoryTab extends React.Component {
 
   componentDidMount = async () => {
     const { web3, contract, accounts, beneficiary } = this.props;
-    console.log(contract);
 
-    contract.events.PaymentMade({
-      fromBlock: 0
-  }, function(error, event){ console.log(event); })
-  .on('data', function(event){
-      console.log(event); // same results as the optional callback above
-  })
-  .on('changed', function(event){
-      // remove event from local database
-  })
-  .on('error', console.error);
+    contract.events.PaymentMade(
+      {
+        fromBlock: 0
+      },
+      function(error, event) {
+        console.log(event);
+      }
+    );
   };
-
   render() {
     return (
       <div>
