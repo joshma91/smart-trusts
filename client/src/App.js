@@ -1,7 +1,19 @@
 import React, { Component } from "react";
+import {
+  Container,
+  Header,
+  Divider,
+  Segment,
+  Button,
+  Grid,
+  Form,
+  Input
+} from "semantic-ui-react";
+import "semantic-ui-css/semantic.min.css";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./utils/getWeb3";
 import truffleContract from "truffle-contract";
+import FixedMenu from "./components/FixedMenu";
 
 import "./App.css";
 
@@ -23,7 +35,7 @@ class App extends Component {
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      this.setState({ web3, accounts, contract: instance });
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -52,17 +64,72 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+        <FixedMenu />
+
+        <Container text style={{ marginTop: "7em" }}>
+          <Header as="h4" attached="top" block>
+            Trust Information
+          </Header>
+          <Segment attached>
+            <Grid columns={2} divided>
+              <Grid.Row>
+                <Grid.Column>Remaining Trust: asdfasdfasdf</Grid.Column>
+                <Grid.Column>Trust Paid: asdfasdf</Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column>Percent/Payment:</Grid.Column>
+                <Grid.Column>Trust Paid:</Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </Segment>
+          <Divider section />
+
+          <Header as="h4" attached="top" block>
+            OpenLaw Contract Functions (TestRPC Only!)
+          </Header>
+          <Segment attached>
+            <Button>Initialize Trust</Button>
+            <Button style={{ marginLeft: "50px" }}>Make Payment</Button>
+          </Segment>
+
+          <Header as="h4" attached="top" block>
+            Grantor Powers
+          </Header>
+          <Segment attached style={{ textAlign: "left" }}>
+            <Form className="manual-center">
+              <Form.Field inline>
+                <label>Fund Trust</label>
+                <input placeholder="0 ETH" />
+                <Button type="submit">Fund</Button>
+              </Form.Field>
+            </Form>
+
+            <Form className="manual-center">
+              <Form.Field inline>
+                <label>Withdraw From Trust</label>
+                <input placeholder="0 ETH" />
+                <Button type="submit">Withdraw</Button>
+              </Form.Field>
+            </Form>
+          </Segment>
+
+          <Header as="h4" attached="top" block>
+            Grantor/Trustee Powers
+          </Header>
+          <Segment attached>
+            <Form>
+              <Form.Field inline>
+                <label>Set Distribution Rate</label>
+                <input placeholder="0.1% per Period" />
+                <Button type="submit">Set</Button>
+              </Form.Field>
+            </Form>
+
+            <Form>
+              <Button negative>Terminate Trust</Button>
+            </Form>
+          </Segment>
+        </Container>
       </div>
     );
   }

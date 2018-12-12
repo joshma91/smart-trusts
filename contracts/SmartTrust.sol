@@ -16,6 +16,7 @@ contract SmartTrust {
   address beneficiary;
   address trustee;
   address openlaw;
+  uint trustPaid;
 
   // percentages in this contract will be represented by basis points to permit small percentages i.e. 0.01% = 1 BP 
   uint paymentPercentInBP; 
@@ -56,6 +57,7 @@ contract SmartTrust {
     beneficiary = _beneficiary;
     trustee = _trustee;
     paymentPercentInBP = _basisPoints;
+    trustPaid = 0;
   }
 
   /// @notice fallback function which refunds ether if the caller is not the grantor. Will accept the ether if caller is the grantor
@@ -82,6 +84,7 @@ contract SmartTrust {
 
     require(payment > 0 && payment < trustBalance, "make sure there are sufficient funds in the trust");
     beneficiary.transfer(payment);
+    trustPaid += payment;
     emit PaymentMade(payment, address(this).balance);
   } 
   
