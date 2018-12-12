@@ -1,5 +1,5 @@
-import { Container, Menu } from 'semantic-ui-react'
 import React from 'react';
+import { Container, Menu } from 'semantic-ui-react'
 
 export const FixedMenu = () => (
   <Menu fixed='top' inverted>

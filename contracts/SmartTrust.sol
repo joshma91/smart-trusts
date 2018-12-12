@@ -42,13 +42,13 @@ contract SmartTrust {
   }
 
   /**
-   * @notice initializeParties is called by OpenLaw when the trust agreement is signed 
+   * @notice initializeTrust is called by OpenLaw when the trust agreement is signed 
    * @param _grantor - grantor address
    * @param _trustee - trustee address
    * @param _beneficiary - beneficiary address
    * @param _basisPoints - percentage of trust paid per period in basis points
    */
-  function initializeParties (address _grantor, address _trustee, address _beneficiary, uint _basisPoints) public payable {
+  function initializeTrust (address _grantor, address _trustee, address _beneficiary, uint _basisPoints) public payable {
     
     // require that the openlaw variable is unset to implement access control 
     require(openlaw == address(0), "contract is already in use");

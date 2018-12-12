@@ -7,13 +7,15 @@ import {
   Button,
   Grid,
   Form,
-  Input
+  Input,
+  Tab
 } from "semantic-ui-react";
 import "semantic-ui-css/semantic.min.css";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./utils/getWeb3";
 import truffleContract from "truffle-contract";
 import FixedMenu from "./components/FixedMenu";
+import AdministrationTab from "./components/AdministrationTab"
 
 import "./App.css";
 
@@ -59,6 +61,25 @@ class App extends Component {
   };
 
   render() {
+    const {web3, accounts, contract } = this.state;
+
+    const panes = [
+      {
+        menuItem: "Administer Trust",
+        render: () => (
+          <Tab.Pane attached={true}>
+            <AdministrationTab web3={web3} accounts={accounts} contract={contract}/>
+          </Tab.Pane>
+        )
+      },
+      {
+        menuItem: "Payment History",
+        render: () => (
+          <Tab.Pane attached={true}>
+            Nothing to see here yet!
+          </Tab.Pane>
+        )
+      }];
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
@@ -84,51 +105,7 @@ class App extends Component {
           </Segment>
           <Divider section />
 
-          <Header as="h4" attached="top" block>
-            OpenLaw Contract Functions (TestRPC Only!)
-          </Header>
-          <Segment attached>
-            <Button>Initialize Trust</Button>
-            <Button style={{ marginLeft: "50px" }}>Make Payment</Button>
-          </Segment>
-
-          <Header as="h4" attached="top" block>
-            Grantor Powers
-          </Header>
-          <Segment attached style={{ textAlign: "left" }}>
-            <Form className="manual-center">
-              <Form.Field inline>
-                <label>Fund Trust</label>
-                <input placeholder="0 ETH" />
-                <Button type="submit">Fund</Button>
-              </Form.Field>
-            </Form>
-
-            <Form className="manual-center">
-              <Form.Field inline>
-                <label>Withdraw From Trust</label>
-                <input placeholder="0 ETH" />
-                <Button type="submit">Withdraw</Button>
-              </Form.Field>
-            </Form>
-          </Segment>
-
-          <Header as="h4" attached="top" block>
-            Grantor/Trustee Powers
-          </Header>
-          <Segment attached>
-            <Form>
-              <Form.Field inline>
-                <label>Set Distribution Rate</label>
-                <input placeholder="0.1% per Period" />
-                <Button type="submit">Set</Button>
-              </Form.Field>
-            </Form>
-
-            <Form>
-              <Button negative>Terminate Trust</Button>
-            </Form>
-          </Segment>
+          <Tab menu={{ attached: true}} panes={panes}/>
         </Container>
       </div>
     );
