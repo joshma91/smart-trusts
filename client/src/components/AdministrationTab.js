@@ -12,24 +12,33 @@ import {
 } from "semantic-ui-react";
 
 export default class AdministrationTab extends React.Component {
-  state = { response: null}
+  state = {}
 
   async componentDidMount() {
     const {web3, accounts, contract } = this.props;
-    // const response = await contract.methods.get().call({ from: accounts[2] });
-    // this.setState({response})
+
+  }
+
+  initializeTrust = async () => {
+    const {web3, accounts, contract } = this.props;
+    
+    await contract.methods
+    .initializeTrust("0xf17f52151EbEF6C7334FAD080c5704D77216b732", "0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef", "0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2", 1000)
+    .send({ from: accounts[0]})
+    .on("receipt", function(receipt) {
+      console.log(receipt.events.TrustInitialized.returnValues);
+    });
   }
 
   render(){
-    const { response } = this.state
+
     return (
       <div>
-      {response ? (response.toNumber()): null}
       <Header as="h4" attached="top" block>
       OpenLaw Contract Functions (TestRPC Only!)
     </Header>
     <Segment attached>
-      <Button>Initialize Trust</Button>
+      <Button onClick={this.initializeTrust}>Initialize Trust</Button>
       <Button style={{ marginLeft: "50px" }}>Make Payment</Button>
     </Segment>
 

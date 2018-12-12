@@ -6,6 +6,10 @@ pragma solidity ^0.4.24;
  * @notice SmartTrust is the entry point for interacting with a corresponding OpenLaw 'Smart Trusts' agreement
  **/
 contract SmartTrust {
+
+  /// @notice TrustInitialized is emitted when the trust is initialized 
+  event TrustInitialized(address grantor, address trustee, address beneficiary, uint basisPoints);
+
   /// @notice TrustFunded is emitted when the Grantor adds funds to the trust 
   event TrustFunded(uint funding, uint trustValue);
   
@@ -13,8 +17,8 @@ contract SmartTrust {
   event PaymentMade(uint payment, uint trustValue);
   
   address grantor;
-  address beneficiary;
   address trustee;
+  address beneficiary;
   address openlaw;
   uint trustPaid;
 
@@ -58,6 +62,15 @@ contract SmartTrust {
     trustee = _trustee;
     paymentPercentInBP = _basisPoints;
     trustPaid = 0;
+    emit TrustInitialized(grantor, trustee, beneficiary, paymentPercentInBP);
+  }
+
+  /**
+   * @notice getTrustData returns all relevant information in this contract
+   */
+  function getTrustData () public view returns 
+    (address, address, address, uint, uint, uint) {
+    return(grantor, trustee, beneficiary, trustPaid, paymentPercentInBP, address(this).balance);
   }
 
   /// @notice fallback function which refunds ether if the caller is not the grantor. Will accept the ether if caller is the grantor
