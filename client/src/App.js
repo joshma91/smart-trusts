@@ -17,25 +17,42 @@ import getContract from "./utils/getContract";
 import truffleContract from "truffle-contract";
 import FixedMenu from "./components/FixedMenu";
 import AdministrationTab from "./components/AdministrationTab";
+import HistoryTab from "./components/HistoryTab"
 
 import "./App.css";
 
 class App extends Component {
-  state = { web3: null, accounts: null, contract: null, trustPaid: null, percent: null, remainingTrust: null};
+  state = {
+    web3: null,
+    accounts: null,
+    contract: null,
+    beneficiary: null,
+    trustPaid: null,
+    percent: null,
+    remainingTrust: null,
+  };
 
   componentDidMount = async () => {
-    await this.getWeb3AndContract()
+    await this.getWeb3AndContract();
 
     const { web3, accounts, contract } = this.state;
-    const trustData = await contract.methods.getTrustData().call({ from: accounts[0] });
-    this.setState({ trustPaid: trustData[3], percent: trustData[4], remainingTrust: trustData[5] })
+    const trustData = await contract.methods
+      .getTrustData()
+      .call({ from: accounts[0] });
+    console.log(trustData);
+    this.setState({
+      beneficiary: trustData[2],
+      trustPaid: web3.utils.fromWei(trustData[3]),
+      percent: trustData[4],
+      remainingTrust: web3.utils.fromWei(trustData[5])
+    });
   };
 
   getWeb3AndContract = async () => {
     try {
-      const web3 = await getWeb3()
-      const accounts = await web3.eth.getAccounts()
-      const contract = await getContract(web3, SmartTrustContract)
+      const web3 = await getWeb3();
+      const accounts = await web3.eth.getAccounts();
+      const contract = await getContract(web3, SmartTrustContract);
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -47,23 +64,18 @@ class App extends Component {
       );
       console.log(error);
     }
-  }
-
-  runExample = async () => {
-    const { accounts, contract } = this.state;
-
-    // Stores a given value, 5 by default.
-    await contract.set(5, { from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.get();
-
-    // Update state with the result.
-    this.setState({ storageValue: response.toNumber() });
   };
 
   render() {
-    const { web3, accounts, contract, trustPaid, percent, remainingTrust } = this.state;
+    const {
+      web3,
+      accounts,
+      contract,
+      beneficiary,
+      trustPaid,
+      percent,
+      remainingTrust
+    } = this.state;
 
     const panes = [
       {
@@ -81,7 +93,10 @@ class App extends Component {
       {
         menuItem: "Payment History",
         render: () => (
-          <Tab.Pane attached={true}>Nothing to see here yet!</Tab.Pane>
+          <Tab.Pane attached={true}>
+            {" "}
+            <HistoryTab web3={web3} accounts={accounts} contract={contract} beneficiary={beneficiary}/>
+          </Tab.Pane>
         )
       }
     ];
@@ -103,7 +118,7 @@ class App extends Component {
                 <Grid.Column>Trust Paid: {trustPaid} ETH</Grid.Column>
               </Grid.Row>
               <Grid.Row>
-                <Grid.Column>Percent/Payment: {percent/10000}%</Grid.Column>
+                <Grid.Column>Percent/Payment: {percent / 100}%</Grid.Column>
               </Grid.Row>
             </Grid>
           </Segment>

@@ -20,7 +20,7 @@ export default class AdministrationTab extends React.Component {
 
   setFundAmount = e => this.setState({ fundAmount: e.target.value });
   setWithdrawAmount = e => this.setState({ withdrawAmount: e.target.value });
-  newPaymentRate = e => this.setState({ newPaymentRate: e.target.value });
+  setNewPaymentRate = e => this.setState({ newPaymentRate: e.target.value });
 
   initializeTrust = async () => {
     const { web3, accounts, contract } = this.props;
@@ -30,7 +30,7 @@ export default class AdministrationTab extends React.Component {
         "0xf17f52151EbEF6C7334FAD080c5704D77216b732",
         "0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef",
         "0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2",
-        1000
+        100
       )
       .send({ from: accounts[0] })
       .on("receipt", function(receipt) {
@@ -40,27 +40,42 @@ export default class AdministrationTab extends React.Component {
 
   makePayment = async () => {
     const { web3, accounts, contract } = this.props;
-    const { fundAmount } = this.state;
-    const amountToSend = web3.toWei(fundAmount, "ether");
     await contract.methods
-      .fundTrust()
-      .send({ from: accounts[0], amountToSend });
+      .makePayment()
+      .send({ from: accounts[0] });
   };
 
   fundTrust = async () => {
     const { web3, accounts, contract } = this.props;
+    const { fundAmount } = this.state;
+    const amountToSend = web3.utils.toWei(fundAmount);
+    await contract.methods
+      .fundTrust()
+      .send({ from: accounts[0], value: amountToSend });
   };
 
   withdrawFunds = async () => {
     const { web3, accounts, contract } = this.props;
+    const { withdrawAmount } = this.state;
+    const amountToWithdraw = web3.utils.toWei(withdrawAmount);
+    await contract.methods
+      .withdrawFromTrust(amountToWithdraw)
+      .send({ from: accounts[0]});
   };
 
   setRate = async () => {
     const { web3, accounts, contract } = this.props;
+    const { newPaymentRate } = this.state;
+    await contract.methods
+      .changePercentage(newPaymentRate*100)
+      .send({ from: accounts[0]});
   };
 
   terminateTrust = async () => {
     const { web3, accounts, contract } = this.props;
+    await contract.methods
+    .terminateTrust()
+    .send({ from: accounts[0]});
   };
 
   render() {
