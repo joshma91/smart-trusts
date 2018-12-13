@@ -13,41 +13,76 @@ import {
 } from "semantic-ui-react";
 
 export default class HistoryTab extends React.Component {
-  state = {};
+  state = { payments: [] };
 
   componentDidMount = async () => {
     const { web3, contract, accounts, beneficiary } = this.props;
 
-    contract.events.PaymentMade(
-      {
-        fromBlock: 0
-      },
-      function(error, event) {
-        console.log(event);
-      }
-    );
+    contract.events
+      .PaymentMade(
+        {
+          fromBlock: 0
+        },
+        function(error, event) {}
+      )
+      .on("data", async event => {
+        const { payments } = this.state;
+        const hash = event.transactionHash;
+        const block = await web3.eth.getTransaction(hash);
+        const time = await web3.eth.getBlock(block.blockNumber);
+        const d = new Date(time.timestamp * 1000);
+        const date =
+          d.getDate() +
+          "/" +
+          d.getMonth() +
+          "/" +
+          d.getFullYear() +
+          " " +
+          d.getHours() +
+          ":" +
+          d.getMinutes();
+        payments.push({
+          d,
+          date,
+          payment: event.returnValues.payment,
+          trustPaid: event.returnValues.trustPaid
+        });
+        this.setState({ payments });
+      });
   };
+
   render() {
+    const { payments } = this.state;
+    payments.sort((a, b) => {
+      return b.d - a.d;
+    });
+    
+    const { web3 } = this.props;
     return (
       <div>
         {" "}
         <Table striped>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Name</Table.HeaderCell>
-              <Table.HeaderCell>Date Joined</Table.HeaderCell>
-              <Table.HeaderCell>E-mail</Table.HeaderCell>
-              <Table.HeaderCell>Called</Table.HeaderCell>
+              <Table.HeaderCell>Time</Table.HeaderCell>
+              <Table.HeaderCell>Payment</Table.HeaderCell>
+              <Table.HeaderCell>Trust Paid</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
-            <Table.Row>
-              <Table.Cell>{this.props.beneficiary}</Table.Cell>
-              <Table.Cell>September 14, 2013</Table.Cell>
-              <Table.Cell>jhlilk22@yahoo.com</Table.Cell>
-              <Table.Cell>No</Table.Cell>
-            </Table.Row>
+            {payments.length > 0 &&
+              payments.map(x => {
+                return (
+                  <Table.Row>
+                    <Table.Cell>{x.date}</Table.Cell>
+                    <Table.Cell>{web3.utils.fromWei(x.payment)} ETH</Table.Cell>
+                    <Table.Cell>
+                      {web3.utils.fromWei(x.trustPaid)} ETH
+                    </Table.Cell>
+                  </Table.Row>
+                );
+              })}
           </Table.Body>
         </Table>
       </div>

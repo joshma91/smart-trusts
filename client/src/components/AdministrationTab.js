@@ -40,9 +40,7 @@ export default class AdministrationTab extends React.Component {
 
   makePayment = async () => {
     const { web3, accounts, contract } = this.props;
-    await contract.methods
-      .makePayment()
-      .send({ from: accounts[0] });
+    await contract.methods.makePayment().send({ from: accounts[0] });
   };
 
   fundTrust = async () => {
@@ -60,22 +58,22 @@ export default class AdministrationTab extends React.Component {
     const amountToWithdraw = web3.utils.toWei(withdrawAmount);
     await contract.methods
       .withdrawFromTrust(amountToWithdraw)
-      .send({ from: accounts[0]});
+      .send({ from: accounts[0] });
   };
 
   setRate = async () => {
     const { web3, accounts, contract } = this.props;
     const { newPaymentRate } = this.state;
     await contract.methods
-      .changePercentage(newPaymentRate*100)
-      .send({ from: accounts[0]});
+      .changePercentage(newPaymentRate * 100)
+      .send({ from: accounts[0] });
   };
 
   terminateTrust = async () => {
     const { web3, accounts, contract } = this.props;
     await contract.methods
-    .terminateTrust()
-    .send({ from: accounts[0]});
+      .terminateTrust()
+      .send({ from: accounts[0], gas: 3000000 });
   };
 
   render() {

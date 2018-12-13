@@ -14,7 +14,7 @@ contract SmartTrust {
   event TrustFunded(uint funding, uint trustValue);
   
   /// @notice PaymentMade is emitted every time a payment is made to the beneficiary
-  event PaymentMade(uint payment, uint trustPaid, uint trustValue);
+  event PaymentMade(uint payment, uint trustPaid, uint trustValue, uint paymentPercentInBP);
   
   address grantor;
   address trustee;
@@ -98,7 +98,7 @@ contract SmartTrust {
     require(payment > 0 && payment < trustBalance, "make sure there are sufficient funds in the trust");
     beneficiary.transfer(payment);
     trustPaid += payment;
-    emit PaymentMade(payment, trustPaid, address(this).balance);
+    emit PaymentMade(payment, trustPaid, address(this).balance, paymentPercentInBP);
   } 
   
   /**

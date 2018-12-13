@@ -17,7 +17,7 @@ import getContract from "./utils/getContract";
 import truffleContract from "truffle-contract";
 import FixedMenu from "./components/FixedMenu";
 import AdministrationTab from "./components/AdministrationTab";
-import HistoryTab from "./components/HistoryTab"
+import HistoryTab from "./components/HistoryTab";
 
 import "./App.css";
 
@@ -29,7 +29,7 @@ class App extends Component {
     beneficiary: null,
     trustPaid: null,
     percent: null,
-    remainingTrust: null,
+    remainingTrust: null
   };
 
   componentDidMount = async () => {
@@ -39,7 +39,24 @@ class App extends Component {
     const trustData = await contract.methods
       .getTrustData()
       .call({ from: accounts[0] });
-    console.log(trustData);
+
+
+    // poll blockchain for payments that are made and change state accordingly
+    contract.events.PaymentMade(
+      {
+        fromBlock: (await web3.eth.getBlockNumber()), toBlock:'pending'
+      },
+      async (error, event) => {
+        if (!error && event != null) {
+          await this.setState({
+            trustPaid: web3.utils.fromWei(event.returnValues.trustPaid),
+            percent: event.returnValues.paymentPercentInBP,
+            remainingTrust: web3.utils.fromWei(event.returnValues.trustValue)
+          })
+        }
+      }
+    );
+
     this.setState({
       beneficiary: trustData[2],
       trustPaid: web3.utils.fromWei(trustData[3]),
@@ -95,7 +112,12 @@ class App extends Component {
         render: () => (
           <Tab.Pane attached={true}>
             {" "}
-            <HistoryTab web3={web3} accounts={accounts} contract={contract} beneficiary={beneficiary}/>
+            <HistoryTab
+              web3={web3}
+              accounts={accounts}
+              contract={contract}
+              beneficiary={beneficiary}
+            />
           </Tab.Pane>
         )
       }
@@ -119,6 +141,9 @@ class App extends Component {
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>Percent/Payment: {percent / 100}%</Grid.Column>
+                <Grid.Column>
+                  Beneficiary: {beneficiary.substring(2)}
+                </Grid.Column>
               </Grid.Row>
             </Grid>
           </Segment>
