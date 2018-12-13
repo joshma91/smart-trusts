@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "openzeppelin-solidity": "^2.0.0"
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
+    "dotenv": "^6.2.0",
+    "openzeppelin-solidity": "^2.0.0",
+    "truffle-hdwallet-provider": "0.0.6"
   }
 }

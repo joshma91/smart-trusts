@@ -1,6 +1,7 @@
 const getContractInstance = async (web3, contractDefinition) => {
   // get network ID and the deployed address
   const networkId = await web3.eth.net.getId();
+  console.log(contractDefinition)
   const deployedAddress = contractDefinition.networks[networkId].address;
 
   // create the instance
