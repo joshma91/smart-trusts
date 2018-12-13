@@ -12,7 +12,15 @@ import {
 } from "semantic-ui-react";
 
 export default class AdministrationTab extends React.Component {
-  state = { fundAmount: "", withdrawAmount: "", newPaymentRate: "" };
+  state = {
+    fundAmount: "",
+    withdrawAmount: "",
+    newPaymentRate: "",
+    fundLoading: false,
+    withdrawLoading: false,
+    setLoading: false,
+    terminateLoading: false
+  };
 
   async componentDidMount() {
     const { web3, accounts, contract } = this.props;
@@ -47,36 +55,67 @@ export default class AdministrationTab extends React.Component {
     const { web3, accounts, contract } = this.props;
     const { fundAmount } = this.state;
     const amountToSend = web3.utils.toWei(fundAmount);
-    await contract.methods
-      .fundTrust()
-      .send({ from: accounts[0], value: amountToSend });
+    this.setState({ fundLoading: true }, async () => {
+      await contract.methods
+        .fundTrust()
+        .send({ from: accounts[0], value: amountToSend });
+
+      this.setState({
+        fundLoading: false
+      });
+    });
   };
 
   withdrawFunds = async () => {
     const { web3, accounts, contract } = this.props;
     const { withdrawAmount } = this.state;
     const amountToWithdraw = web3.utils.toWei(withdrawAmount);
-    await contract.methods
-      .withdrawFromTrust(amountToWithdraw)
-      .send({ from: accounts[0] });
+
+    this.setState({ withdrawLoading: true }, async () => {
+      await contract.methods
+        .withdrawFromTrust(amountToWithdraw)
+        .send({ from: accounts[0] });
+
+      this.setState({
+        withdrawLoading: false
+      });
+    });
   };
 
   setRate = async () => {
     const { web3, accounts, contract } = this.props;
     const { newPaymentRate } = this.state;
-    await contract.methods
-      .changePercentage(newPaymentRate * 100)
-      .send({ from: accounts[0] });
+    this.setState({ setLoading: true }, async () => {
+      await contract.methods
+        .changePercentage(newPaymentRate * 100)
+        .send({ from: accounts[0] });
+
+      this.setState({
+        setLoading: false
+      });
+    });
   };
 
   terminateTrust = async () => {
     const { web3, accounts, contract } = this.props;
-    await contract.methods
-      .terminateTrust()
-      .send({ from: accounts[0], gas: 3000000 });
+    this.setState({ terminateLoading: true }, async () => {
+      await contract.methods
+        .terminateTrust()
+        .send({ from: accounts[0], gas: 3000000 });
+
+      this.setState({
+        terminateLoading: false
+      });
+    });
   };
 
   render() {
+    const {
+      fundLoading,
+      withdrawLoading,
+      setLoading,
+      terminateLoading
+    } = this.state;
     return (
       <div>
         <Header as="h4" attached="top" block>
@@ -101,7 +140,9 @@ export default class AdministrationTab extends React.Component {
                 onChange={this.setFundAmount}
                 placeholder="0 ETH"
               />
-              <Button onClick={this.fundTrust}>Fund</Button>
+              <Button loading={fundLoading} onClick={this.fundTrust}>
+                Fund
+              </Button>
             </Form.Field>
           </Form>
 
@@ -113,7 +154,11 @@ export default class AdministrationTab extends React.Component {
                 onChange={this.setWithdrawAmount}
                 placeholder="0 ETH"
               />
-              <Button onClick={this.withdrawFunds} type="submit">
+              <Button
+                loading={withdrawLoading}
+                onClick={this.withdrawFunds}
+                type="submit"
+              >
                 Withdraw
               </Button>
             </Form.Field>
@@ -132,12 +177,18 @@ export default class AdministrationTab extends React.Component {
                 onChange={this.setNewPaymentRate}
                 placeholder="0.1% per Period"
               />
-              <Button onClick={this.setRate}>Set</Button>
+              <Button loading={setLoading} onClick={this.setRate}>
+                Set
+              </Button>
             </Form.Field>
           </Form>
 
           <Form>
-            <Button negative onClick={this.terminateTrust}>
+            <Button
+              negative
+              loading={terminateLoading}
+              onClick={this.terminateTrust}
+            >
               Terminate Trust
             </Button>
           </Form>

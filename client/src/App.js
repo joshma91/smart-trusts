@@ -18,6 +18,7 @@ import truffleContract from "truffle-contract";
 import FixedMenu from "./components/FixedMenu";
 import AdministrationTab from "./components/AdministrationTab";
 import HistoryTab from "./components/HistoryTab";
+import {formatNumber} from "./utils/formatNumber"
 
 import "./App.css";
 
@@ -136,8 +137,8 @@ class App extends Component {
           <Segment attached>
             <Grid columns={2} divided>
               <Grid.Row>
-                <Grid.Column>Remaining Trust: {remainingTrust} ETH</Grid.Column>
-                <Grid.Column>Trust Paid: {trustPaid} ETH</Grid.Column>
+                <Grid.Column>Remaining Trust: {formatNumber(remainingTrust)} ETH</Grid.Column>
+                <Grid.Column>Trust Paid: {formatNumber(trustPaid)} ETH</Grid.Column>
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>Percent/Payment: {percent / 100}%</Grid.Column>

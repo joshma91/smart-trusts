@@ -11,6 +11,7 @@ import {
   Tab,
   Table
 } from "semantic-ui-react";
+import { formatNumber } from "../utils/formatNumber"
 
 export default class HistoryTab extends React.Component {
   state = { payments: [] };
@@ -34,7 +35,7 @@ export default class HistoryTab extends React.Component {
         const date =
           d.getDate() +
           "/" +
-          d.getMonth() +
+          (parseInt(d.getMonth()) + 1) +
           "/" +
           d.getFullYear() +
           " " +
@@ -76,9 +77,9 @@ export default class HistoryTab extends React.Component {
                 return (
                   <Table.Row>
                     <Table.Cell>{x.date}</Table.Cell>
-                    <Table.Cell>{web3.utils.fromWei(x.payment)} ETH</Table.Cell>
+                    <Table.Cell>{formatNumber(web3.utils.fromWei(x.payment))} ETH</Table.Cell>
                     <Table.Cell>
-                      {web3.utils.fromWei(x.trustPaid)} ETH
+                      {formatNumber(web3.utils.fromWei(x.trustPaid))} ETH
                     </Table.Cell>
                   </Table.Row>
                 );
