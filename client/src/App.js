@@ -40,7 +40,6 @@ class App extends Component {
       .getTrustData()
       .call({ from: accounts[0] });
     console.log(trustData);
-    console.log(contract)
     this.setState({
       beneficiary: trustData[2],
       trustPaid: web3.utils.fromWei(trustData[3]),
