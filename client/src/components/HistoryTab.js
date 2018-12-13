@@ -1,15 +1,7 @@
 import React from "react";
 import {
-  Container,
-  Header,
-  Divider,
-  Segment,
-  Button,
-  Grid,
-  Form,
-  Input,
-  Tab,
-  Table
+  Table,
+  Loader
 } from "semantic-ui-react";
 import { formatNumber } from "../utils/formatNumber"
 
@@ -72,7 +64,7 @@ export default class HistoryTab extends React.Component {
           </Table.Header>
 
           <Table.Body>
-            {payments.length > 0 &&
+            {payments.length > 0 ? (
               payments.map(x => {
                 return (
                   <Table.Row>
@@ -83,7 +75,7 @@ export default class HistoryTab extends React.Component {
                     </Table.Cell>
                   </Table.Row>
                 );
-              })}
+              })): (<Loader style={{marginTop:"50px"}} active />)}
           </Table.Body>
         </Table>
       </div>
