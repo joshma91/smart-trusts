@@ -18,7 +18,7 @@ import truffleContract from "truffle-contract";
 import FixedMenu from "./components/FixedMenu";
 import AdministrationTab from "./components/AdministrationTab";
 import HistoryTab from "./components/HistoryTab";
-import {formatNumber} from "./utils/formatNumber"
+import { formatNumber } from "./utils/formatNumber";
 
 import "./App.css";
 
@@ -27,7 +27,7 @@ class App extends Component {
     web3: null,
     accounts: null,
     contract: null,
-    beneficiary: null,
+    beneficiary: "",
     trustPaid: null,
     percent: null,
     remainingTrust: null
@@ -37,33 +37,35 @@ class App extends Component {
     await this.getWeb3AndContract();
 
     const { web3, accounts, contract } = this.state;
-    const trustData = await contract.methods
-      .getTrustData()
-      .call({ from: accounts[0] });
+    if (web3 && accounts && contract) {
+      const trustData = await contract.methods
+        .getTrustData()
+        .call({ from: accounts[0] });
 
-
-    // poll blockchain for payments that are made and change state accordingly
-    contract.events.PaymentMade(
-      {
-        fromBlock: (await web3.eth.getBlockNumber()), toBlock:'pending'
-      },
-      async (error, event) => {
-        if (!error && event != null) {
-          await this.setState({
-            trustPaid: web3.utils.fromWei(event.returnValues.trustPaid),
-            percent: event.returnValues.paymentPercentInBP,
-            remainingTrust: web3.utils.fromWei(event.returnValues.trustValue)
-          })
+      // poll blockchain for payments that are made and change state accordingly
+      contract.events.PaymentMade(
+        {
+          fromBlock: await web3.eth.getBlockNumber(),
+          toBlock: "pending"
+        },
+        async (error, event) => {
+          if (!error && event != null) {
+            await this.setState({
+              trustPaid: web3.utils.fromWei(event.returnValues.trustPaid),
+              percent: event.returnValues.paymentPercentInBP,
+              remainingTrust: web3.utils.fromWei(event.returnValues.trustValue)
+            });
+          }
         }
-      }
-    );
+      );
 
-    this.setState({
-      beneficiary: trustData[2],
-      trustPaid: web3.utils.fromWei(trustData[3]),
-      percent: trustData[4],
-      remainingTrust: web3.utils.fromWei(trustData[5])
-    });
+      this.setState({
+        beneficiary: trustData[2],
+        trustPaid: web3.utils.fromWei(trustData[3]),
+        percent: trustData[4],
+        remainingTrust: web3.utils.fromWei(trustData[5])
+      });
+    }
   };
 
   getWeb3AndContract = async () => {
@@ -123,12 +125,12 @@ class App extends Component {
         )
       }
     ];
-    if (!this.state.web3 || trustPaid == null) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
+    // if (!this.state.web3 || trustPaid == null) {
+    //   return <div>Loading Web3, accounts, and contract...</div>;
+    // }
     return (
       <div className="App">
-        <FixedMenu />
+        <FixedMenu contract={contract} accounts={accounts} />
 
         <Container text style={{ marginTop: "7em" }}>
           <Header as="h4" attached="top" block>
@@ -137,8 +139,12 @@ class App extends Component {
           <Segment attached>
             <Grid columns={2} divided>
               <Grid.Row>
-                <Grid.Column>Remaining Trust: {formatNumber(remainingTrust)} ETH</Grid.Column>
-                <Grid.Column>Trust Paid: {formatNumber(trustPaid)} ETH</Grid.Column>
+                <Grid.Column>
+                  Remaining Trust: {formatNumber(remainingTrust)} ETH
+                </Grid.Column>
+                <Grid.Column>
+                  Trust Paid: {formatNumber(trustPaid)} ETH
+                </Grid.Column>
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column>Percent/Payment: {percent / 100}%</Grid.Column>
