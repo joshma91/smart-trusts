@@ -1,15 +1,16 @@
 import React from 'react';
 import { Container, Menu, Modal, Button, Grid, Image, Header } from 'semantic-ui-react'
+import metamask from "../static/metamask.png"
 
 export const FixedMenu = ({contract, accounts}) => (
-  <Menu fixed='top' inverted>
+  <Menu style={{height:"90px"}} fixed='top' inverted>
       <Container>
         <Menu.Item as='h2' header>
           OpenLaw Smart Trust 
         </Menu.Item>
 
             <Menu.Item style={{borderLeft:"0px"}} position="right">{renderWelcome(contract, accounts)}</Menu.Item>
-        <Menu.Item as='a' position="right">By Josh Ma</Menu.Item>
+        <Menu.Item as='a' href="https://github.com/joshma91" position="right">By Josh Ma</Menu.Item>
       </Container>
     </Menu>
 )
@@ -25,7 +26,7 @@ const renderWelcome = ( accounts, contract ) => {
         <strong>Please unlock your Metamask account! </strong>
         <Image
           style={{ display: "inline-block" }}
-          src="/static/metamask.png"
+          src={metamask}
         />
       </div>
     );
@@ -42,14 +43,14 @@ const renderWelcome = ( accounts, contract ) => {
 
 const MetaMaskModal = () => (
   <div>
-  <div style={{marginTop:"-20px", paddingBottom:"8px", fontWeight:"bold", paddingLeft:"20px"}}>Running on Ropsten Testnet</div>
+  <div style={{marginTop:"-10px", paddingBottom:"5px", fontWeight:"bold"}}>Running on Rinkeby Testnet</div>
   <Modal
     basic
     size={"tiny"}
     trigger={
       <Button className="metaBtn">
         Get Metamask{" "}
-        <Image style={{ display: "inline-block" }} src="../static/metamask.png" />
+        <Image style={{ display: "inline-block" }} src={metamask} />
       </Button>
     }
   >
@@ -74,7 +75,7 @@ const MetaMaskModal = () => (
             <Grid.Column>
               <Image
                 style={{ display: "inline-block" }}
-                src="/static/metamask.png"
+                src={metamask}
               />
             </Grid.Column>
           </Grid.Row>
@@ -103,7 +104,7 @@ const MetaMaskModal = () => (
             <Grid.Column>
               <Image
                 style={{ display: "inline-block" }}
-                src="/static/metamask.png"
+                src={metamask}
               />
             </Grid.Column>
           </Grid.Row>
@@ -114,7 +115,7 @@ const MetaMaskModal = () => (
             <Grid.Column>
               <Header
                 as="h2"
-                content="Connect to the Ropsten Ethereum network"
+                content="Connect to the Rinkeby Ethereum network"
                 className="modalText"
                 style={{ color: "#00B6E4" }}
               />
